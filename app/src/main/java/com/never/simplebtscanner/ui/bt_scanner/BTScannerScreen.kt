@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.never.simplebtscanner.ui.bt_scanner.utils.BTController
-import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BluetoothDeviceDomain
+import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BTDeviceDomain
 import com.never.simplebtscanner.ui.theme.AppTheme
 import timber.log.Timber
 
@@ -71,7 +71,7 @@ fun ScannerScreen(btController: BTController) {
 private fun ScannerScreenContent(
     onStartScan: () -> Unit,
     onStopScan: () -> Unit,
-    scannedDevices: List<BluetoothDeviceDomain>
+    scannedDevices: List<BTDeviceDomain>
 ) {
     Scaffold { innerPadding ->
         Column(

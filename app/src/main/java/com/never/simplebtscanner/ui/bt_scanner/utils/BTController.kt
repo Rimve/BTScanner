@@ -10,7 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
-import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BluetoothDeviceDomain
+import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BTDeviceDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,8 +25,8 @@ class BTController @Inject constructor(private val context: Context) : Broadcast
     }
 
     private val _mutableScannedDeviceList =
-        MutableStateFlow<List<BluetoothDeviceDomain>>(emptyList())
-    val scannedDeviceList: StateFlow<List<BluetoothDeviceDomain>>
+        MutableStateFlow<List<BTDeviceDomain>>(emptyList())
+    val scannedDeviceList: StateFlow<List<BTDeviceDomain>>
         get() = _mutableScannedDeviceList.asStateFlow()
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -43,7 +43,7 @@ class BTController @Inject constructor(private val context: Context) : Broadcast
                 Timber.i("[BT Controller]: Device found")
                 device?.let {
                     _mutableScannedDeviceList.update { devices ->
-                        val newDevice = BluetoothDeviceDomain.fromEntity(device)
+                        val newDevice = BTDeviceDomain.fromEntity(device)
                         if (newDevice in devices) devices else devices + newDevice
                     }
                 }
