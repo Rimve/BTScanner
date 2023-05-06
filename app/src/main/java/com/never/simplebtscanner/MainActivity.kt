@@ -8,18 +8,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.never.simplebtscanner.ui.bt_scanner.ScannerScreen
-import com.never.simplebtscanner.ui.bt_scanner.utils.BTController
 import com.never.simplebtscanner.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber.DebugTree
 import timber.log.Timber.Forest
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var btController: BTController
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -33,7 +28,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ScannerScreen(btController)
+                    ScannerScreen()
                 }
             }
         }

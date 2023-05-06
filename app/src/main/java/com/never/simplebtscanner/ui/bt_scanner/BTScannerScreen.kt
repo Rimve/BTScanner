@@ -20,48 +20,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.never.simplebtscanner.ui.bt_scanner.utils.BTController
 import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BTDeviceDomain
 import com.never.simplebtscanner.ui.theme.AppTheme
 import timber.log.Timber
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun ScannerScreen(btController: BTController) {
-    val permissionList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        listOf(
-            Manifest.permission.BLUETOOTH_SCAN,
-            Manifest.permission.BLUETOOTH_CONNECT
-        )
-    } else {
-        listOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.BLUETOOTH
-        )
-    }
-    val scannedDeviceList by btController.scannedDeviceList.collectAsState()
-    val permissionState = rememberMultiplePermissionsState(
-        permissions = permissionList
-    ) { permissionMap ->
-        val isMissingPermissions = permissionMap.any { !it.value }
-        if (isMissingPermissions) {
-            Timber.i("[ScannerScreen] Missing permissions")
-        } else {
-            Timber.i("[ScannerScreen] Permissions granted")
-        }
-    }
+fun ScannerScreen(viewModel: BTScannerViewModel = hiltViewModel()) {
+    val state by viewModel.state.collectAsState()
 
-    SideEffect {
-        permissionState.launchMultiplePermissionRequest()
-    }
+    SetupPermissionCheck()
 
     AppTheme {
         ScannerScreenContent(
-            onStartScan = { btController.startDiscovery() },
-            onStopScan = { btController.stopDiscovery() },
-            scannedDevices = scannedDeviceList
+            onAction = viewModel::onAction,
+            scannedDevices = state.scannedDeviceList
         )
     }
 }
@@ -69,8 +44,7 @@ fun ScannerScreen(btController: BTController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ScannerScreenContent(
-    onStartScan: () -> Unit,
-    onStopScan: () -> Unit,
+    onAction: (BTScannerAction) -> Unit,
     scannedDevices: List<BTDeviceDomain>
 ) {
     Scaffold { innerPadding ->
@@ -98,13 +72,43 @@ private fun ScannerScreenContent(
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Button(onClick = { onStartScan() }) {
+                Button(onClick = { onAction(BTScannerAction.StartScanning) }) {
                     Text(text = "Start scanning")
                 }
-                Button(onClick = { onStopScan() }) {
+                Button(onClick = { onAction(BTScannerAction.StopScanning) }) {
                     Text(text = "Stop scanning")
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun SetupPermissionCheck() {
+    val permissionList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        listOf(
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT
+        )
+    } else {
+        listOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BLUETOOTH
+        )
+    }
+    val permissionState = rememberMultiplePermissionsState(
+        permissions = permissionList
+    ) { permissionMap ->
+        val isMissingPermissions = permissionMap.any { !it.value }
+        if (isMissingPermissions) {
+            Timber.i("[ScannerScreen] Missing permissions")
+        } else {
+            Timber.i("[ScannerScreen] Permissions granted")
+        }
+    }
+
+    SideEffect {
+        permissionState.launchMultiplePermissionRequest()
     }
 }
