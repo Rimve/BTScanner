@@ -28,7 +28,7 @@ import com.never.simplebtscanner.ui.theme.AppTheme
 import timber.log.Timber
 
 @Composable
-fun ScannerScreen(viewModel: BTScannerViewModel = hiltViewModel()) {
+fun BTScannerScreen(viewModel: BTScannerViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
 
     SetupPermissionCheck()
