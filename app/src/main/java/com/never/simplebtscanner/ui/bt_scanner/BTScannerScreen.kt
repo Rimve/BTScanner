@@ -19,18 +19,17 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.never.simplebtscanner.ui.bt_scanner.utils.BluetoothController
+import com.never.simplebtscanner.ui.bt_scanner.utils.BTController
 import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BluetoothDeviceDomain
 import com.never.simplebtscanner.ui.theme.AppTheme
 import timber.log.Timber
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun ScannerScreen() {
+fun ScannerScreen(btController: BTController) {
     val permissionList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         listOf(
             Manifest.permission.BLUETOOTH_SCAN,
@@ -42,8 +41,7 @@ fun ScannerScreen() {
             Manifest.permission.BLUETOOTH
         )
     }
-    val btController = BluetoothController(LocalContext.current)
-    val scannedDeviceList by btController.scannedDevices.collectAsState()
+    val scannedDeviceList by btController.scannedDeviceList.collectAsState()
     val permissionState = rememberMultiplePermissionsState(
         permissions = permissionList
     ) { permissionMap ->
