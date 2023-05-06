@@ -2,18 +2,29 @@ package com.never.simplebtscanner.ui.scanner
 
 import android.Manifest
 import android.os.Build
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.never.simplebtscanner.ui.scanner.utils.BluetoothController
+import com.never.simplebtscanner.ui.scanner.utils.domain.BluetoothDeviceDomain
 import com.never.simplebtscanner.ui.theme.AppTheme
 import timber.log.Timber
 
@@ -22,7 +33,8 @@ import timber.log.Timber
 fun ScannerScreen() {
     val permissionList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         listOf(
-            Manifest.permission.BLUETOOTH_SCAN
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT
         )
     } else {
         listOf(
@@ -30,6 +42,8 @@ fun ScannerScreen() {
             Manifest.permission.BLUETOOTH
         )
     }
+    val btController = BluetoothController(LocalContext.current)
+    val scannedDeviceList by btController.scannedDevices.collectAsState()
     val permissionState = rememberMultiplePermissionsState(
         permissions = permissionList
     ) { permissionMap ->
@@ -46,20 +60,50 @@ fun ScannerScreen() {
     }
 
     AppTheme {
-        ScannerScreenContent()
+        ScannerScreenContent(
+            onStartScan = { btController.startDiscovery() },
+            onStopScan = { btController.stopDiscovery() },
+            scannedDevices = scannedDeviceList
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScannerScreenContent() {
+private fun ScannerScreenContent(
+    onStartScan: () -> Unit,
+    onStopScan: () -> Unit,
+    scannedDevices: List<BluetoothDeviceDomain>
+) {
     Scaffold { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Text(text = "SCANNER", modifier = Modifier.align(Alignment.Center))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                items(count = scannedDevices.size, key = { scannedDevices[it].macAddress }) {
+                    Text(text = scannedDevices[it].macAddress)
+                }
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(onClick = { onStartScan() }) {
+                    Text(text = "Start scanning")
+                }
+                Button(onClick = { onStopScan() }) {
+                    Text(text = "Stop scanning")
+                }
+            }
         }
     }
 }
