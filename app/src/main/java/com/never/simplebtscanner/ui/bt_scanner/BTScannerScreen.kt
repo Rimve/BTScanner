@@ -1,4 +1,4 @@
-package com.never.simplebtscanner.ui.scanner
+package com.never.simplebtscanner.ui.bt_scanner
 
 import android.Manifest
 import android.os.Build
@@ -23,8 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.never.simplebtscanner.ui.scanner.utils.BluetoothController
-import com.never.simplebtscanner.ui.scanner.utils.domain.BluetoothDeviceDomain
+import com.never.simplebtscanner.ui.bt_scanner.utils.BluetoothController
+import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BluetoothDeviceDomain
 import com.never.simplebtscanner.ui.theme.AppTheme
 import timber.log.Timber
 
@@ -86,7 +86,10 @@ private fun ScannerScreenContent(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
-                items(count = scannedDevices.size, key = { scannedDevices[it].macAddress }) {
+                items(
+                    count = scannedDevices.size,
+                    key = { scannedDevices[it].macAddress }
+                ) {
                     Text(text = scannedDevices[it].macAddress)
                 }
             }

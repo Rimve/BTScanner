@@ -1,4 +1,4 @@
-package com.never.simplebtscanner.ui.scanner.utils
+package com.never.simplebtscanner.ui.bt_scanner.utils
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -10,7 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
-import com.never.simplebtscanner.ui.scanner.utils.domain.BluetoothDeviceDomain
+import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BluetoothDeviceDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
