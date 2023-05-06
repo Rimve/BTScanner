@@ -22,7 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.never.simplebtscanner.R
-import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BTDeviceDomain
+import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
 
 @Composable
 fun BTDeviceItemComponent(btDeviceDomain: BTDeviceDomain) {

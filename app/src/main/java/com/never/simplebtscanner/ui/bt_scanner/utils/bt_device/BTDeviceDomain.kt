@@ -1,4 +1,4 @@
-package com.never.simplebtscanner.ui.bt_scanner.utils.domain
+package com.never.simplebtscanner.ui.bt_scanner.utils.bt_device
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice

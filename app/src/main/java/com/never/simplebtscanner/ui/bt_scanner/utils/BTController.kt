@@ -10,7 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
-import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BTDeviceDomain
+import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

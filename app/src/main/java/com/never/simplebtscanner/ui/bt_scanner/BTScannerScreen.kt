@@ -25,7 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.never.simplebtscanner.ui.bt_scanner.components.BTDeviceItemComponent
-import com.never.simplebtscanner.ui.bt_scanner.utils.domain.BTDeviceDomain
+import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
 import com.never.simplebtscanner.ui.theme.AppTheme
 import timber.log.Timber
 
