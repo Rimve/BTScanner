@@ -2,10 +2,12 @@ package com.never.simplebtscanner.ui.bt_scanner
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.never.simplebtscanner.di.IoDispatcher
 import com.never.simplebtscanner.ui.bt_scanner.utils.BTController
 import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
 import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.database.BTDeviceLocalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,14 +20,15 @@ import javax.inject.Inject
 @HiltViewModel
 class BTScannerViewModel @Inject constructor(
     private val btController: BTController,
-    private val btDeviceLocalRepository: BTDeviceLocalRepository
+    private val btDeviceLocalRepository: BTDeviceLocalRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _state = MutableStateFlow(BTScannerViewState())
     val state: StateFlow<BTScannerViewState> = _state
 
     init {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 btController.scannedDeviceList
                     .combine(btDeviceLocalRepository.getBTDeviceList()) { scannedDeviceList, repoDeviceList ->
                         scannedDeviceList.map { scannedDevice ->
@@ -62,7 +65,7 @@ class BTScannerViewModel @Inject constructor(
 
     private fun addDeviceToRepo(btDevice: BTDeviceDomain) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 btDeviceLocalRepository.insertBTDevice(
                     btDevice.copy(isSaved = true)
                 )
@@ -72,7 +75,7 @@ class BTScannerViewModel @Inject constructor(
 
     private fun removeDeviceFromRepo(btDevice: BTDeviceDomain) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 btDeviceLocalRepository.removeBTDevice(btDevice)
             }
         }
