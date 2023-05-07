@@ -7,6 +7,6 @@ import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.database.BTDevice
 
 @Database(entities = [BTDeviceEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    abstract val btDeviceDao: BTDeviceDao
+    abstract fun btDeviceDao(): BTDeviceDao
 }
 
