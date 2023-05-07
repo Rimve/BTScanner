@@ -11,7 +11,8 @@ data class BTDeviceDomain(
 ) {
     fun toEntity() = BTDeviceEntity(
         name = name,
-        macAddress = macAddress
+        macAddress = macAddress,
+        isSaved = isSaved
     )
 
     companion object {

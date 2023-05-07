@@ -26,11 +26,14 @@ class BTScannerViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                btDeviceLocalRepository.deleteTable()
                 btController.scannedDeviceList
                     .combine(btDeviceLocalRepository.getBTDeviceList()) { scannedDeviceList, repoDeviceList ->
-                        scannedDeviceList.map {
-                            it.copy(isSaved = repoDeviceList.contains(it))
+                        scannedDeviceList.map { scannedDevice ->
+                            scannedDevice.copy(
+                                isSaved = repoDeviceList.any {
+                                    it.macAddress == scannedDevice.macAddress
+                                }
+                            )
                         }
                     }
                     .collect { scannedDeviceList ->
@@ -60,7 +63,9 @@ class BTScannerViewModel @Inject constructor(
     private fun addDeviceToRepo(btDevice: BTDeviceDomain) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                btDeviceLocalRepository.insertBTDevice(btDevice)
+                btDeviceLocalRepository.insertBTDevice(
+                    btDevice.copy(isSaved = true)
+                )
             }
         }
     }

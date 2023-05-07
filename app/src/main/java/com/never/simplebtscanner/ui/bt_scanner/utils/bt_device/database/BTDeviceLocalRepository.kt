@@ -7,7 +7,9 @@ import javax.inject.Inject
 
 class BTDeviceLocalRepository @Inject constructor(private val database: AppDatabase) {
     fun insertBTDevice(btDevice: BTDeviceDomain) =
-        database.btDeviceDao().insert(btDevice.toEntity())
+        database.btDeviceDao().insert(
+            btDevice.toEntity()
+        )
 
     fun removeBTDevice(btDevice: BTDeviceDomain) =
         database.btDeviceDao().deleteByAddress(btDevice.macAddress)

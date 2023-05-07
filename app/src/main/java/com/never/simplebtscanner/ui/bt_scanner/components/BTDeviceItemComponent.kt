@@ -62,7 +62,7 @@ fun BTDeviceItemComponent(
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 painter = getSaveIconByState(btDeviceDomain.isSaved),
-                tint = Color.Red,
+                tint = getIconColorByState(btDeviceDomain.isSaved),
                 contentDescription = "Save device icon",
                 modifier = Modifier
                     .size(24.dp)
@@ -74,10 +74,13 @@ fun BTDeviceItemComponent(
 
 @Composable
 private fun getSaveIconByState(isSaved: Boolean) = if (isSaved) {
-    painterResource(id = androidx.core.R.drawable.ic_call_answer_video)
+    painterResource(id = R.drawable.ic_favorite_filled)
 } else {
-    painterResource(id = androidx.core.R.drawable.ic_call_decline)
+    painterResource(id = R.drawable.ic_favorite_empty)
 }
+
+@Composable
+private fun getIconColorByState(isSaved: Boolean) = if (isSaved) Color.Red else Color.Black
 
 @Preview
 @Composable
