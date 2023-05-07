@@ -26,7 +26,7 @@
         android:theme="@style/Theme.SimpleBTScanner"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.SimpleBTScanner">
             <intent-filter>
