@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -75,34 +76,50 @@ private fun ScannerScreenContent(
         title = stringResource(id = R.string.scan_devices_top_bar_label),
         onSearch = { onAction(BTScannerAction.OnSearchClick) }
     ) {
-        AnimatedVisibility(
-            visible = state.isSearching,
-            enter = slideInVertically { -it },
-            exit = slideOutVertically { -it }
-        ) {
-            TextField(
-                value = state.searchTerm,
-                onValueChange = { searchTerm ->
-                    onAction(BTScannerAction.OnSearchTermUpdate(searchTerm))
-                },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { SearchPlaceHolder() }
-            )
-        }
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 contentPadding = PaddingValues(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(
-                    count = state.scannedDeviceList.size,
-                    key = { state.scannedDeviceList[it].macAddress }
-                ) {
-                    BTDeviceItemComponent(
-                        btDeviceDomain = state.scannedDeviceList[it],
-                        onSaveClick = { onSaveClick(state.scannedDeviceList[it], onAction) }
-                    )
+                item {
+                    AnimatedVisibility(
+                        visible = state.isSearching,
+                        enter = slideInVertically { -it },
+                        exit = slideOutVertically { -it }
+                    ) {
+                        TextField(
+                            value = state.searchTerm,
+                            onValueChange = { searchTerm ->
+                                onAction(BTScannerAction.OnSearchTermUpdate(searchTerm))
+                            },
+                            placeholder = { SearchPlaceHolder() },
+                            maxLines = 1,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+                if (state.isSearching) {
+                    items(
+                        count = state.searchedDeviceList.size,
+                        key = { state.searchedDeviceList[it].macAddress }
+                    ) {
+                        BTDeviceItemComponent(
+                            btDeviceDomain = state.searchedDeviceList[it],
+                            onSaveClick = { onSaveClick(state.searchedDeviceList[it], onAction) }
+                        )
+                    }
+                } else {
+                    items(
+                        count = state.scannedDeviceList.size,
+                        key = { state.scannedDeviceList[it].macAddress }
+                    ) {
+                        BTDeviceItemComponent(
+                            btDeviceDomain = state.scannedDeviceList[it],
+                            onSaveClick = { onSaveClick(state.scannedDeviceList[it], onAction) }
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.weight(1f))

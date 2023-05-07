@@ -52,7 +52,7 @@ class BTScannerViewModel @Inject constructor(
             BTScannerAction.OnSearchClick -> _state.update { it.copy(isSearching = !it.isSearching) }
             is BTScannerAction.AddDeviceToRepo -> addDeviceToRepo(action.btDevice)
             is BTScannerAction.RemoveDeviceFromRepo -> removeDeviceFromRepo(action.btDevice)
-            is BTScannerAction.OnSearchTermUpdate -> _state.update { it.copy(searchTerm = action.searchTerm) }
+            is BTScannerAction.OnSearchTermUpdate -> searchDeviceByTerm(action.searchTerm)
         }
     }
 
@@ -78,6 +78,23 @@ class BTScannerViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(ioDispatcher) {
                 btDeviceLocalRepository.removeBTDevice(btDevice)
+            }
+        }
+    }
+
+    private fun searchDeviceByTerm(searchTerm: String) {
+        viewModelScope.launch {
+            withContext(ioDispatcher) {
+                _state.update { state ->
+                    val foundDeviceList = state.scannedDeviceList.filter {
+                        it.macAddress.contains(searchTerm, ignoreCase = true) ||
+                                (it.name?.contains(searchTerm, ignoreCase = true) ?: false)
+                    }
+                    state.copy(
+                        searchTerm = searchTerm,
+                        searchedDeviceList = foundDeviceList
+                    )
+                }
             }
         }
     }
