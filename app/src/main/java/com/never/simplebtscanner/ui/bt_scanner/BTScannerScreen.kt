@@ -2,6 +2,9 @@ package com.never.simplebtscanner.ui.bt_scanner
 
 import android.Manifest
 import android.os.Build
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -49,19 +54,41 @@ fun BTScannerScreen(
     AppTheme {
         ScannerScreenContent(
             onAction = viewModel::onAction,
-            scannedDevices = state.scannedDeviceList,
-            onStopScan = { navController.navigate(MainNavigationRoutes.SavedDevices.destination()) }
+            state = state,
+            onStopScan = {
+                navController.navigate(
+                    MainNavigationRoutes.SavedDevices.destination()
+                )
+            }
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ScannerScreenContent(
     onAction: (BTScannerAction) -> Unit,
-    scannedDevices: List<BTDeviceDomain>,
+    state: BTScannerViewState,
     onStopScan: () -> Unit
 ) {
-    ScaffoldComponent(title = stringResource(id = R.string.scan_devices_top_bar_label)) {
+    ScaffoldComponent(
+        title = stringResource(id = R.string.scan_devices_top_bar_label),
+        onSearch = { onAction(BTScannerAction.OnSearchClick) }
+    ) {
+        AnimatedVisibility(
+            visible = state.isSearching,
+            enter = slideInVertically { -it },
+            exit = slideOutVertically { -it }
+        ) {
+            TextField(
+                value = state.searchTerm,
+                onValueChange = { searchTerm ->
+                    onAction(BTScannerAction.OnSearchTermUpdate(searchTerm))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { SearchPlaceHolder() }
+            )
+        }
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -69,18 +96,12 @@ private fun ScannerScreenContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(
-                    count = scannedDevices.size,
-                    key = { scannedDevices[it].macAddress }
+                    count = state.scannedDeviceList.size,
+                    key = { state.scannedDeviceList[it].macAddress }
                 ) {
                     BTDeviceItemComponent(
-                        btDeviceDomain = scannedDevices[it],
-                        onSaveClick = {
-                            if (scannedDevices[it].isSaved) {
-                                onAction(BTScannerAction.RemoveDeviceFromRepo(scannedDevices[it]))
-                            } else {
-                                onAction(BTScannerAction.AddDeviceToRepo(scannedDevices[it]))
-                            }
-                        }
+                        btDeviceDomain = state.scannedDeviceList[it],
+                        onSaveClick = { onSaveClick(state.scannedDeviceList[it], onAction) }
                     )
                 }
             }
@@ -99,6 +120,28 @@ private fun ScannerScreenContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SearchPlaceHolder() {
+    Text(
+        text = stringResource(id = R.string.scan_devices_search_field_placeholder_label)
+    )
+}
+
+private fun onSaveClick(
+    btDeviceDomain: BTDeviceDomain,
+    onAction: (BTScannerAction) -> Unit
+) {
+    if (btDeviceDomain.isSaved) {
+        onAction(
+            BTScannerAction.RemoveDeviceFromRepo(btDeviceDomain)
+        )
+    } else {
+        onAction(
+            BTScannerAction.AddDeviceToRepo(btDeviceDomain)
+        )
     }
 }
 

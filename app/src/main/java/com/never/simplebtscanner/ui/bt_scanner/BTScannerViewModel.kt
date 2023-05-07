@@ -8,7 +8,6 @@ import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
 import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.database.BTDeviceLocalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -50,8 +49,10 @@ class BTScannerViewModel @Inject constructor(
         when (action) {
             BTScannerAction.StartScanning -> startScanning()
             BTScannerAction.StopScanning -> stopScanning()
+            BTScannerAction.OnSearchClick -> _state.update { it.copy(isSearching = !it.isSearching) }
             is BTScannerAction.AddDeviceToRepo -> addDeviceToRepo(action.btDevice)
             is BTScannerAction.RemoveDeviceFromRepo -> removeDeviceFromRepo(action.btDevice)
+            is BTScannerAction.OnSearchTermUpdate -> _state.update { it.copy(searchTerm = action.searchTerm) }
         }
     }
 
