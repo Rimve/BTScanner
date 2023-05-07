@@ -42,7 +42,7 @@ fun BTDeviceItemComponent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 tint = MaterialTheme.colorScheme.primary,
                 contentDescription = "Bluetooth device icon",
                 modifier = Modifier.size(36.dp)
