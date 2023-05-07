@@ -9,6 +9,12 @@ class BTDeviceLocalRepository @Inject constructor(private val database: AppDatab
     fun insertBTDevices(btDeviceList: List<BTDeviceDomain>) =
         database.btDeviceDao().insertAll(btDeviceList.map(BTDeviceDomain::toEntity))
 
+    fun insertSavedBTDevice(btDevice: BTDeviceDomain) =
+        database.btDeviceDao().insert(btDevice.toEntity(true))
+
+    fun removeSavedBTDevice(btDevice: BTDeviceDomain) =
+        database.btDeviceDao().insert(btDevice.toEntity(false))
+
     fun getBTDeviceList() = database.btDeviceDao().getAll().map { btDeviceEntityList ->
         btDeviceEntityList.map(BTDeviceEntity::toDomain)
     }

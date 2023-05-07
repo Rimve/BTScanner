@@ -43,7 +43,7 @@ class BTController @Inject constructor(private val context: Context) : Broadcast
                 Timber.i("[BT Controller]: Device found")
                 device?.let {
                     _mutableScannedDeviceList.update { devices ->
-                        val newDevice = BTDeviceDomain.fromEntity(device)
+                        val newDevice = BTDeviceDomain.fromDevice(device)
                         if (newDevice in devices) devices else devices + newDevice
                     }
                 }

@@ -8,11 +8,13 @@ import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
 data class BTDeviceEntity(
     @PrimaryKey
     val macAddress: String,
-    val name: String?
+    val name: String?,
+    val isSaved: Boolean
 ) {
     fun toDomain() = BTDeviceDomain(
         name = name,
-        macAddress = macAddress
+        macAddress = macAddress,
+        isSaved = isSaved
     )
 
     companion object {

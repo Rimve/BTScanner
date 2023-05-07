@@ -12,6 +12,9 @@ interface BTDeviceDao {
     @Query("SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME}")
     fun getAll(): Flow<List<BTDeviceEntity>>
 
+    @Query("SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE isSaved IS 1")
+    fun getSaved(): Flow<List<BTDeviceEntity>>
+
     @Query(
         "SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE name LIKE :name" +
                 " OR macAddress LIKE :macAddress LIMIT 1"

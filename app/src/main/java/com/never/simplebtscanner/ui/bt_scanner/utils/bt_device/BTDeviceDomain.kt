@@ -6,19 +6,22 @@ import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.database.BTDevice
 
 data class BTDeviceDomain(
     val name: String?,
-    val macAddress: String
+    val macAddress: String,
+    val isSaved: Boolean
 ) {
-    fun toEntity() = BTDeviceEntity(
+    fun toEntity(isSaved: Boolean = false) = BTDeviceEntity(
         name = name,
-        macAddress = macAddress
+        macAddress = macAddress,
+        isSaved = isSaved
     )
 
     companion object {
         @SuppressLint("MissingPermission")
-        fun fromEntity(bluetoothDevice: BluetoothDevice) =
+        fun fromDevice(bluetoothDevice: BluetoothDevice) =
             BTDeviceDomain(
                 name = bluetoothDevice.name,
-                macAddress = bluetoothDevice.address
+                macAddress = bluetoothDevice.address,
+                isSaved = false
             )
     }
 }
