@@ -24,7 +24,7 @@ object AppTopBar {
                     Text(
                         text = title,
                         modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Left
                     )
                 }
             },

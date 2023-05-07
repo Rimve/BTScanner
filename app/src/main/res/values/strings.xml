@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SimpleBTScanner</string>
+    <string name="scan_devices_top_bar_label">Scan Bluetooth Devices</string>
+    <string name="saved_devices_top_bar_label">Saved Devices</string>
 </resources>

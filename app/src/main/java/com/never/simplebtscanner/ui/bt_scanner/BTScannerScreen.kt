@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,13 +19,16 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.never.simplebtscanner.R
 import com.never.simplebtscanner.ui.bt_scanner.components.BTDeviceItemComponent
 import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
 import com.never.simplebtscanner.ui.theme.AppTheme
+import com.never.simplebtscanner.utils.components.ScaffoldComponent
 import timber.log.Timber
 
 @Composable
@@ -48,18 +49,13 @@ fun BTScannerScreen(viewModel: BTScannerViewModel = hiltViewModel()) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ScannerScreenContent(
     onAction: (BTScannerAction) -> Unit,
     scannedDevices: List<BTDeviceDomain>
 ) {
-    Scaffold { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+    ScaffoldComponent(title = stringResource(id = R.string.scan_devices_top_bar_label)) {
+        Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 contentPadding = PaddingValues(8.dp),
