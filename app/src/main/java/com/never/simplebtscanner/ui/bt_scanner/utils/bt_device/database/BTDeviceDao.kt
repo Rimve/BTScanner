@@ -1,7 +1,6 @@
 package com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.database
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -12,9 +11,6 @@ interface BTDeviceDao {
     @Query("SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME}")
     fun getAll(): Flow<List<BTDeviceEntity>>
 
-    @Query("SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE isSaved IS 1")
-    fun getSaved(): Flow<List<BTDeviceEntity>>
-
     @Query(
         "SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE name LIKE :name" +
                 " OR macAddress LIKE :macAddress LIMIT 1"
@@ -24,9 +20,9 @@ interface BTDeviceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(btDevice: BTDeviceEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(btDeviceList: List<BTDeviceEntity>)
+    @Query("DELETE FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE macAddress = :macAddress")
+    fun deleteByAddress(macAddress: String)
 
-    @Delete
-    fun delete(btDeviceList: BTDeviceEntity)
+    @Query("DELETE FROM ${BTDeviceEntity.DB_TABLE_NAME}")
+    fun deleteAll()
 }

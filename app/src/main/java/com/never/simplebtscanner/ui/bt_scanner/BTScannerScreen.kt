@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,15 +61,24 @@ private fun ScannerScreenContent(
                 .padding(innerPadding)
         ) {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                contentPadding = PaddingValues(8.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 items(
                     count = scannedDevices.size,
                     key = { scannedDevices[it].macAddress }
                 ) {
-                    BTDeviceItemComponent(scannedDevices[it])
+                    BTDeviceItemComponent(
+                        btDeviceDomain = scannedDevices[it],
+                        onSaveClick = {
+                            if (scannedDevices[it].isSaved) {
+                                onAction(BTScannerAction.RemoveDeviceFromRepo(scannedDevices[it]))
+                            } else {
+                                onAction(BTScannerAction.AddDeviceToRepo(scannedDevices[it]))
+                            }
+                        }
+                    )
                 }
             }
             Spacer(modifier = Modifier.weight(1f))

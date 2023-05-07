@@ -9,10 +9,9 @@ data class BTDeviceDomain(
     val macAddress: String,
     val isSaved: Boolean
 ) {
-    fun toEntity(isSaved: Boolean = false) = BTDeviceEntity(
+    fun toEntity() = BTDeviceEntity(
         name = name,
-        macAddress = macAddress,
-        isSaved = isSaved
+        macAddress = macAddress
     )
 
     companion object {

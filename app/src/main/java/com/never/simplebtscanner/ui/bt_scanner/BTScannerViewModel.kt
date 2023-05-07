@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,13 +25,17 @@ class BTScannerViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            btController.scannedDeviceList.collect { scannedDeviceList ->
-                onAction(BTScannerAction.AddDevicesToRepo(scannedDeviceList))
-            }
-        }
-        viewModelScope.launch {
-            getDeviceListFromRepo().collect { scannedDeviceList ->
-                _state.update { it.copy(scannedDeviceList = scannedDeviceList) }
+            withContext(Dispatchers.IO) {
+                btDeviceLocalRepository.deleteTable()
+                btController.scannedDeviceList
+                    .combine(btDeviceLocalRepository.getBTDeviceList()) { scannedDeviceList, repoDeviceList ->
+                        scannedDeviceList.map {
+                            it.copy(isSaved = repoDeviceList.contains(it))
+                        }
+                    }
+                    .collect { scannedDeviceList ->
+                        _state.update { it.copy(scannedDeviceList = scannedDeviceList) }
+                    }
             }
         }
     }
@@ -39,7 +44,8 @@ class BTScannerViewModel @Inject constructor(
         when (action) {
             BTScannerAction.StartScanning -> startScanning()
             BTScannerAction.StopScanning -> stopScanning()
-            is BTScannerAction.AddDevicesToRepo -> addNewDeviceToRepo(action.btDeviceList)
+            is BTScannerAction.AddDeviceToRepo -> addDeviceToRepo(action.btDevice)
+            is BTScannerAction.RemoveDeviceFromRepo -> removeDeviceFromRepo(action.btDevice)
         }
     }
 
@@ -51,15 +57,21 @@ class BTScannerViewModel @Inject constructor(
         btController.stopDiscovery()
     }
 
-    private fun addNewDeviceToRepo(btDeviceList: List<BTDeviceDomain>) {
+    private fun addDeviceToRepo(btDevice: BTDeviceDomain) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                btDeviceLocalRepository.insertBTDevices(btDeviceList)
+                btDeviceLocalRepository.insertBTDevice(btDevice)
             }
         }
     }
 
-    private fun getDeviceListFromRepo() = btDeviceLocalRepository.getBTDeviceList()
+    private fun removeDeviceFromRepo(btDevice: BTDeviceDomain) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                btDeviceLocalRepository.removeBTDevice(btDevice)
+            }
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()

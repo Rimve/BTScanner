@@ -1,6 +1,7 @@
 package com.never.simplebtscanner.ui.bt_scanner.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,16 +27,18 @@ import com.never.simplebtscanner.R
 import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
 
 @Composable
-fun BTDeviceItemComponent(btDeviceDomain: BTDeviceDomain) {
+fun BTDeviceItemComponent(
+    btDeviceDomain: BTDeviceDomain,
+    onSaveClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.onBackground)
     ) {
         Row(
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier.padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -55,14 +59,35 @@ fun BTDeviceItemComponent(btDeviceDomain: BTDeviceDomain) {
                     color = MaterialTheme.colorScheme.tertiary
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                painter = getSaveIconByState(btDeviceDomain.isSaved),
+                tint = Color.Red,
+                contentDescription = "Save device icon",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onSaveClick() }
+            )
         }
     }
+}
+
+@Composable
+private fun getSaveIconByState(isSaved: Boolean) = if (isSaved) {
+    painterResource(id = androidx.core.R.drawable.ic_call_answer_video)
+} else {
+    painterResource(id = androidx.core.R.drawable.ic_call_decline)
 }
 
 @Preview
 @Composable
 private fun BTDeviceItemComponentPreview() {
     BTDeviceItemComponent(
-        BTDeviceDomain("", "00:00:00:00:00:00")
+        btDeviceDomain = BTDeviceDomain(
+            name = "",
+            macAddress = "00:00:00:00:00:00",
+            isSaved = false
+        ),
+        onSaveClick = {}
     )
 }
