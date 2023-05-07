@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.never.simplebtscanner.BuildConfig
-import com.never.simplebtscanner.ui.theme.AppTheme
+import com.never.simplebtscanner.utils.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber.DebugTree
 import timber.log.Timber.Forest

@@ -1,4 +1,4 @@
-package com.never.simplebtscanner.ui.theme
+package com.never.simplebtscanner.utils.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

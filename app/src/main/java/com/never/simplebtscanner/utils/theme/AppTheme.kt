@@ -1,4 +1,4 @@
-package com.never.simplebtscanner.ui.theme
+package com.never.simplebtscanner.utils.theme
 
 import android.app.Activity
 import android.os.Build

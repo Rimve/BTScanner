@@ -22,17 +22,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.never.simplebtscanner.R
+import com.never.simplebtscanner.ui.MainNavigationRoutes
 import com.never.simplebtscanner.ui.bt_scanner.components.BTDeviceItemComponent
 import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
-import com.never.simplebtscanner.ui.theme.AppTheme
 import com.never.simplebtscanner.utils.components.ScaffoldComponent
+import com.never.simplebtscanner.utils.theme.AppTheme
 import timber.log.Timber
 
 @Composable
-fun BTScannerScreen(viewModel: BTScannerViewModel = hiltViewModel()) {
+fun BTScannerScreen(
+    navController: NavController,
+    viewModel: BTScannerViewModel = hiltViewModel()
+) {
     val state by viewModel.state.collectAsState()
 
     SetupPermissionCheck(
@@ -44,7 +49,8 @@ fun BTScannerScreen(viewModel: BTScannerViewModel = hiltViewModel()) {
     AppTheme {
         ScannerScreenContent(
             onAction = viewModel::onAction,
-            scannedDevices = state.scannedDeviceList
+            scannedDevices = state.scannedDeviceList,
+            onStopScan = { navController.navigate(MainNavigationRoutes.SavedDevices.destination()) }
         )
     }
 }
@@ -52,7 +58,8 @@ fun BTScannerScreen(viewModel: BTScannerViewModel = hiltViewModel()) {
 @Composable
 private fun ScannerScreenContent(
     onAction: (BTScannerAction) -> Unit,
-    scannedDevices: List<BTDeviceDomain>
+    scannedDevices: List<BTDeviceDomain>,
+    onStopScan: () -> Unit
 ) {
     ScaffoldComponent(title = stringResource(id = R.string.scan_devices_top_bar_label)) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -87,7 +94,7 @@ private fun ScannerScreenContent(
                 Button(onClick = { onAction(BTScannerAction.StartScanning) }) {
                     Text(text = "Start scanning")
                 }
-                Button(onClick = { onAction(BTScannerAction.StopScanning) }) {
+                Button(onClick = { onStopScan() }) {
                     Text(text = "Stop scanning")
                 }
             }
