@@ -161,7 +161,14 @@ private fun ScannerScreenContent(
             onValueChange = { searchTerm ->
                 onAction(BTScannerAction.OnRenameDeviceTermUpdate(searchTerm))
             },
-            onConfirm = { /*TODO*/ },
+            onConfirm = {
+                onAction(
+                    BTScannerAction.OnRenameDevice(
+                        nameTerm = state.selectedDeviceName,
+                        btDevice = state.selectedDevice
+                    )
+                )
+            },
             confirmButtonLabel = stringResource(id = R.string.scan_devices_alert_rename_confirm_label),
             onDismiss = { onAction(BTScannerAction.OnDeviceRenameDialogDismiss) },
             dismissButtonLabel = stringResource(id = R.string.scan_devices_alert_rename_cancel_label)

@@ -53,6 +53,7 @@ class BTScannerViewModel @Inject constructor(
             is BTScannerAction.RemoveDevice -> removeDeviceFromRepo(action.btDevice)
             is BTScannerAction.OnSearchTermUpdate -> searchDeviceByTerm(action.searchTerm)
             is BTScannerAction.OnRenameDeviceTermUpdate -> selectedDeviceNameUpdate(action.nameTerm)
+            is BTScannerAction.OnRenameDevice -> renameDevice(action.nameTerm, action.btDevice)
         }
     }
 
@@ -113,6 +114,17 @@ class BTScannerViewModel @Inject constructor(
     private fun selectedDeviceNameUpdate(nameTerm: String) {
         _state.update {
             it.copy(selectedDeviceName = nameTerm)
+        }
+    }
+
+    private fun renameDevice(newName: String?, btDevice: BTDeviceDomain) {
+        viewModelScope.launch {
+            withContext(ioDispatcher) {
+                btDeviceLocalRepository.insertBTDevice(
+                    btDevice.copy(name = newName)
+                )
+                _state.update { it.copy(selectedDevice = null) }
+            }
         }
     }
 
