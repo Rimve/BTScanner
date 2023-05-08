@@ -153,11 +153,11 @@ private fun onSaveClick(
 ) {
     if (btDeviceDomain.isSaved) {
         onAction(
-            BTScannerAction.RemoveDeviceFromRepo(btDeviceDomain)
+            BTScannerAction.RemoveDevice(btDeviceDomain)
         )
     } else {
         onAction(
-            BTScannerAction.AddDeviceToRepo(btDeviceDomain)
+            BTScannerAction.SaveDevice(btDeviceDomain)
         )
     }
 }

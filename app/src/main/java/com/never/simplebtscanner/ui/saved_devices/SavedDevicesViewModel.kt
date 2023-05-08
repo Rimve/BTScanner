@@ -24,7 +24,7 @@ class SavedDevicesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            btDeviceLocalRepository.getBTDeviceList().collect { savedDeviceList ->
+            btDeviceLocalRepository.getSavedDeviceList().collect { savedDeviceList ->
                 _state.update { it.copy(savedDevices = savedDeviceList) }
             }
         }

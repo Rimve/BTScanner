@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class BTDeviceLocalRepository @Inject constructor(private val database: AppDatabase) {
+    fun insertBTDeviceList(btDeviceList: List<BTDeviceDomain>) =
+        database.btDeviceDao().insertList(btDeviceList.map(BTDeviceDomain::toEntity))
+
     fun insertBTDevice(btDevice: BTDeviceDomain) =
         database.btDeviceDao().insert(
             btDevice.toEntity()
@@ -18,5 +21,7 @@ class BTDeviceLocalRepository @Inject constructor(private val database: AppDatab
         btDeviceEntityList.map(BTDeviceEntity::toDomain)
     }
 
-    fun deleteTable() = database.btDeviceDao().deleteAll()
+    fun getSavedDeviceList() = database.btDeviceDao().getAllSaved().map { btDeviceEntityList ->
+        btDeviceEntityList.map(BTDeviceEntity::toDomain)
+    }
 }

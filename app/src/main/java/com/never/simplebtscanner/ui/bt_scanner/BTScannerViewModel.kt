@@ -10,7 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,19 +27,17 @@ class BTScannerViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                btController.scannedDeviceList
-                    .combine(btDeviceLocalRepository.getBTDeviceList()) { scannedDeviceList, repoDeviceList ->
-                        scannedDeviceList.map { scannedDevice ->
-                            scannedDevice.copy(
-                                isSaved = repoDeviceList.any {
-                                    it.macAddress == scannedDevice.macAddress
-                                }
-                            )
-                        }
-                    }
-                    .collect { scannedDeviceList ->
-                        _state.update { it.copy(scannedDeviceList = scannedDeviceList) }
-                    }
+                btController.scannedDeviceList.collect { scannedDeviceList ->
+                    btDeviceLocalRepository.insertBTDeviceList(scannedDeviceList)
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            withContext(ioDispatcher) {
+                btDeviceLocalRepository.getBTDeviceList().collect { repoDeviceList ->
+                    _state.update { it.copy(scannedDeviceList = repoDeviceList) }
+                }
             }
         }
     }
@@ -50,8 +47,8 @@ class BTScannerViewModel @Inject constructor(
             BTScannerAction.StartScanning -> startScanning()
             BTScannerAction.StopScanning -> stopScanning()
             BTScannerAction.OnSearchClick -> _state.update { it.copy(isSearching = !it.isSearching) }
-            is BTScannerAction.AddDeviceToRepo -> addDeviceToRepo(action.btDevice)
-            is BTScannerAction.RemoveDeviceFromRepo -> removeDeviceFromRepo(action.btDevice)
+            is BTScannerAction.SaveDevice -> saveDeviceToRepo(action.btDevice)
+            is BTScannerAction.RemoveDevice -> removeDeviceFromRepo(action.btDevice)
             is BTScannerAction.OnSearchTermUpdate -> searchDeviceByTerm(action.searchTerm)
         }
     }
@@ -64,7 +61,7 @@ class BTScannerViewModel @Inject constructor(
         btController.stopDiscovery()
     }
 
-    private fun addDeviceToRepo(btDevice: BTDeviceDomain) {
+    private fun saveDeviceToRepo(btDevice: BTDeviceDomain) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
                 btDeviceLocalRepository.insertBTDevice(
@@ -77,7 +74,9 @@ class BTScannerViewModel @Inject constructor(
     private fun removeDeviceFromRepo(btDevice: BTDeviceDomain) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                btDeviceLocalRepository.removeBTDevice(btDevice)
+                btDeviceLocalRepository.insertBTDevice(
+                    btDevice.copy(isSaved = false)
+                )
             }
         }
     }

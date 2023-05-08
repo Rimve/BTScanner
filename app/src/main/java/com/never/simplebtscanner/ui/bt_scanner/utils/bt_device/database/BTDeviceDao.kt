@@ -11,6 +11,9 @@ interface BTDeviceDao {
     @Query("SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME}")
     fun getAll(): Flow<List<BTDeviceEntity>>
 
+    @Query("SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE isSaved LIKE 1")
+    fun getAllSaved(): Flow<List<BTDeviceEntity>>
+
     @Query(
         "SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE name LIKE :name" +
                 " OR macAddress LIKE :macAddress LIMIT 1"
@@ -19,6 +22,9 @@ interface BTDeviceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(btDevice: BTDeviceEntity)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertList(btDeviceList: List<BTDeviceEntity>)
 
     @Query("DELETE FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE macAddress = :macAddress")
     fun deleteByAddress(macAddress: String)

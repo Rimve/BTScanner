@@ -6,7 +6,7 @@ sealed class BTScannerAction {
     object StartScanning : BTScannerAction()
     object StopScanning : BTScannerAction()
     object OnSearchClick : BTScannerAction()
-    data class AddDeviceToRepo(val btDevice: BTDeviceDomain) : BTScannerAction()
-    data class RemoveDeviceFromRepo(val btDevice: BTDeviceDomain) : BTScannerAction()
+    data class SaveDevice(val btDevice: BTDeviceDomain) : BTScannerAction()
+    data class RemoveDevice(val btDevice: BTDeviceDomain) : BTScannerAction()
     data class OnSearchTermUpdate(val searchTerm: String) : BTScannerAction()
 }
