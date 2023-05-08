@@ -6,6 +6,7 @@ data class BTScannerViewState(
     val scannedDeviceList: List<BTDeviceDomain> = listOf(),
     val searchedDeviceList: List<BTDeviceDomain> = listOf(),
     val isSearching: Boolean = false,
+    val isScanning: Boolean = false,
     val searchTerm: String = "",
     val selectedDevice: BTDeviceDomain? = null,
     val selectedDeviceName: String? = null,

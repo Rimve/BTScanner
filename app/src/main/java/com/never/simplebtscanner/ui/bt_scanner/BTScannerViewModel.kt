@@ -60,10 +60,12 @@ class BTScannerViewModel @Inject constructor(
 
     private fun startScanning() {
         btController.startDiscovery()
+        _state.update { it.copy(isScanning = true) }
     }
 
     private fun stopScanning() {
         btController.stopDiscovery()
+        _state.update { it.copy(isScanning = false) }
     }
 
     private fun saveDeviceToRepo(btDevice: BTDeviceDomain) {
