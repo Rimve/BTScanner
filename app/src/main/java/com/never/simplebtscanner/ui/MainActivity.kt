@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.rememberNavController
 import com.never.simplebtscanner.BuildConfig
+import com.never.simplebtscanner.utils.components.AppBottomBar
+import com.never.simplebtscanner.utils.components.ScaffoldComponent
 import com.never.simplebtscanner.utils.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber.DebugTree
@@ -21,8 +24,23 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            val mainRouteList = listOf(
+                MainNavigationRoutes.BTScannerRoute,
+                MainNavigationRoutes.SavedDevices,
+            )
+            val navController = rememberNavController()
+
             AppTheme {
-                MainNavigation()
+                ScaffoldComponent(
+                    bottomBar = {
+                        AppBottomBar.Navigation(
+                            navController = navController,
+                            items = mainRouteList
+                        )
+                    }
+                ) {
+                    MainNavigation(navController)
+                }
             }
         }
     }

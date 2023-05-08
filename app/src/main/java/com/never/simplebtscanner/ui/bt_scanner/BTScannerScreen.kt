@@ -7,6 +7,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -80,7 +81,14 @@ private fun ScannerScreenContent(
         title = stringResource(id = R.string.scan_devices_top_bar_label),
         onSearch = { onAction(BTScannerAction.OnSearchClick) },
         snackbarMessage = state.snackbarMessage,
-        snackbarDismissed = { onAction(BTScannerAction.SetSnackbarMessage(null)) }
+        snackbarDismissed = { onAction(BTScannerAction.SetSnackbarMessage(null)) },
+        bottomBar = {
+            BottomButtonComponent(
+                isVisible = state.isScanning,
+                onStopScan = { onAction(BTScannerAction.StopScanning) },
+                onStartScan = { onAction(BTScannerAction.StartScanning) }
+            )
+        }
     ) {
         if (state.isSearching && state.searchedDeviceList.isEmpty() && state.searchTerm.length > 1) {
             EmptySearchComponent(
@@ -149,19 +157,6 @@ private fun ScannerScreenContent(
                     }
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
-            if (state.isScanning) {
-                ScanningButtonComponent(
-                    onClick = { onAction(BTScannerAction.StopScanning) },
-                    label = stringResource(id = R.string.scan_devices_stop_scan_button_label)
-                )
-            } else {
-                ScanningButtonComponent(
-                    onClick = { onAction(BTScannerAction.StartScanning) },
-                    label = stringResource(id = R.string.scan_devices_start_scan_button_label)
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
         }
     }
     RenameDialogComponent(
@@ -283,6 +278,27 @@ private fun EmptySearchComponent(modifier: Modifier = Modifier) {
             text = stringResource(id = R.string.scan_devices_search_results_empty_message)
         )
         Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+private fun BottomButtonComponent(
+    isVisible: Boolean,
+    onStopScan: () -> Unit,
+    onStartScan: () -> Unit
+) {
+    Box(modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)) {
+        if (isVisible) {
+            ScanningButtonComponent(
+                onClick = { onStopScan() },
+                label = stringResource(id = R.string.scan_devices_stop_scan_button_label)
+            )
+        } else {
+            ScanningButtonComponent(
+                onClick = { onStartScan() },
+                label = stringResource(id = R.string.scan_devices_start_scan_button_label)
+            )
+        }
     }
 }
 

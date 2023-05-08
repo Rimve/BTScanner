@@ -23,12 +23,13 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldComponent(
-    title: String?,
+    title: String? = null,
     onSearch: (() -> Unit)? = null,
     onBack: (() -> Unit)? = null,
     snackbarMessage: String? = null,
     snackbarDismissed: () -> Unit = {},
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    bottomBar: (@Composable () -> Unit)? = null,
     content: @Composable (BoxScope.() -> Unit)
 ) {
     LaunchedEffect(snackbarMessage) {
@@ -48,6 +49,11 @@ fun ScaffoldComponent(
                     onBack = onBack,
                     onSearch = onSearch
                 )
+            }
+        },
+        bottomBar = {
+            if (bottomBar != null) {
+                bottomBar()
             }
         },
         snackbarHost = {
