@@ -15,6 +15,7 @@ object Dialog {
     fun WithTextField(
         title: String?,
         textFieldValue: String?,
+        placeHolder: (@Composable () -> Unit)? = null,
         onValueChange: (String) -> Unit,
         onConfirm: () -> Unit,
         confirmButtonLabel: String,
@@ -34,6 +35,7 @@ object Dialog {
                     onValueChange = { term ->
                         onValueChange(term)
                     },
+                    placeholder = { placeHolder?.invoke() },
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
                 )

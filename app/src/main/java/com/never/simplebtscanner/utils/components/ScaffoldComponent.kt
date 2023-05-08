@@ -29,6 +29,7 @@ fun ScaffoldComponent(
     snackbarMessage: String? = null,
     snackbarDismissed: () -> Unit = {},
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    titleComponent: (@Composable () -> Unit)? = null,
     bottomBar: (@Composable () -> Unit)? = null,
     content: @Composable (BoxScope.() -> Unit)
 ) {
@@ -47,7 +48,8 @@ fun ScaffoldComponent(
                 AppTopBar.Primary(
                     title = title,
                     onBack = onBack,
-                    onSearch = onSearch
+                    onSearch = onSearch,
+                    titleComponent = titleComponent
                 )
             }
         },

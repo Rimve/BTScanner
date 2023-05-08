@@ -3,7 +3,11 @@ package com.never.simplebtscanner.ui.bt_scanner
 import android.Manifest
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -80,6 +85,7 @@ private fun ScannerScreenContent(
         onSearch = { onAction(BTScannerAction.OnSearchClick) },
         snackbarMessage = state.snackbarMessage,
         snackbarDismissed = { onAction(BTScannerAction.SetSnackbarMessage(null)) },
+        titleComponent = { ScanningIndicatorComponent(state.isScanning) },
         bottomBar = {
             BottomButtonComponent(
                 isVisible = state.isScanning,
@@ -148,7 +154,7 @@ private fun ScannerScreenContent(
                             onBTDeviceClick = {
                                 onAction(
                                     BTScannerAction.OnDeviceClick(
-                                        state.searchedDeviceList[it]
+                                        state.scannedDeviceList[it]
                                     )
                                 )
                             }
@@ -165,10 +171,43 @@ private fun ScannerScreenContent(
 }
 
 @Composable
-private fun SearchPlaceHolder() {
+private fun SearchTextPlaceHolder() {
     Text(
         text = stringResource(id = R.string.scan_devices_search_field_placeholder_label)
     )
+}
+
+@Composable
+private fun DialogTextPlaceHolder() {
+    Text(
+        text = stringResource(id = R.string.scan_devices_alert_rename_placeholder_label)
+    )
+}
+
+@Composable
+private fun ScanningIndicatorComponent(isVisible: Boolean) {
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = slideInHorizontally(
+            animationSpec = tween(
+                durationMillis = 500,
+                delayMillis = 50,
+                easing = LinearEasing
+            )
+        ),
+        exit = slideOutHorizontally(
+            animationSpec = tween(
+                durationMillis = 500,
+                delayMillis = 50,
+                easing = LinearEasing
+            )
+        )
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(24.dp),
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    }
 }
 
 private fun onDeviceSaveClick(
@@ -203,7 +242,7 @@ private fun SearchComponent(
             onValueChange = { searchTerm ->
                 onValueChange(searchTerm)
             },
-            placeholder = { SearchPlaceHolder() },
+            placeholder = { SearchTextPlaceHolder() },
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
@@ -238,6 +277,7 @@ private fun RenameDialogComponent(
         Dialog.WithTextField(
             title = stringResource(id = R.string.scan_devices_alert_rename_device_title),
             textFieldValue = state.selectedDeviceName,
+            placeHolder = { DialogTextPlaceHolder() },
             onValueChange = { searchTerm ->
                 onAction(BTScannerAction.OnRenameDeviceTermUpdate(searchTerm))
             },
