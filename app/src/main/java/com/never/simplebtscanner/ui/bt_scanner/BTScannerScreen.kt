@@ -5,7 +5,7 @@ import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -95,6 +97,7 @@ private fun ScannerScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp)
+                .padding(top = 8.dp)
         ) {
             SearchComponent(
                 isVisible = state.isSearching,
@@ -104,7 +107,7 @@ private fun ScannerScreenContent(
                 }
             )
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 if (state.isSearching) {
@@ -120,7 +123,7 @@ private fun ScannerScreenContent(
                                     onAction
                                 )
                             },
-                            modifier = Modifier.clickable {
+                            onBTDeviceClick = {
                                 onAction(
                                     BTScannerAction.OnDeviceClick(
                                         state.searchedDeviceList[it]
@@ -142,10 +145,10 @@ private fun ScannerScreenContent(
                                     onAction
                                 )
                             },
-                            modifier = Modifier.clickable {
+                            onBTDeviceClick = {
                                 onAction(
                                     BTScannerAction.OnDeviceClick(
-                                        state.scannedDeviceList[it]
+                                        state.searchedDeviceList[it]
                                     )
                                 )
                             }
@@ -213,6 +216,10 @@ private fun SearchComponent(
 private fun ScanningButtonComponent(onClick: () -> Unit, label: String) {
     Button(
         onClick = { onClick() },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = MaterialTheme.colorScheme.primary
+        ),
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(text = label)
@@ -283,7 +290,11 @@ private fun BottomButtonComponent(
     onStopScan: () -> Unit,
     onStartScan: () -> Unit
 ) {
-    Box(modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)) {
+    Box(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(8.dp)
+    ) {
         if (isVisible) {
             ScanningButtonComponent(
                 onClick = { onStopScan() },

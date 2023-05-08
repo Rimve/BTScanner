@@ -2,6 +2,7 @@ package com.never.simplebtscanner.utils.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -20,20 +21,28 @@ import com.never.simplebtscanner.ui.MainNavigationRoutes
 object AppBottomBar {
     @Composable
     fun Navigation(navController: NavController, items: List<MainNavigationRoutes>) {
-        NavigationBar {
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
             items.forEach { screen ->
                 NavigationBarItem(
                     alwaysShowLabel = false,
-                    colors = NavigationBarItemDefaults.colors(),
                     icon = {
                         Icon(
-                            painterResource(id = screen.iconResId),
+                            painter = painterResource(id = screen.iconResId),
                             contentDescription = null,
                             modifier = Modifier.size(24.dp)
                         )
                     },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                        indicatorColor = MaterialTheme.colorScheme.onPrimary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                        unselectedTextColor = MaterialTheme.colorScheme.onPrimary
+                    ),
                     label = { Text(text = screen.screenName) },
                     selected = currentDestination?.hierarchy?.any { it.route == screen.routePattern } == true,
                     onClick = {

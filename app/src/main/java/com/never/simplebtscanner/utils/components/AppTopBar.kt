@@ -7,6 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -26,6 +27,13 @@ object AppTopBar {
         onBack: (() -> Unit)? = null
     ) {
         TopAppBar(
+            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                scrolledContainerColor = MaterialTheme.colorScheme.primary,
+                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+            ),
             title = {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
@@ -52,9 +60,8 @@ object AppTopBar {
             actions = {
                 if (onSearch != null) {
                     IconButton(
-                        colors = IconButtonDefaults.iconButtonColors(),
                         onClick = { onSearch() },
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(26.dp)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_search),
@@ -62,8 +69,7 @@ object AppTopBar {
                         )
                     }
                 }
-            },
-            colors = TopAppBarDefaults.mediumTopAppBarColors()
+            }
         )
     }
 }

@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,13 +30,16 @@ import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
 fun BTDeviceItemComponent(
     btDeviceDomain: BTDeviceDomain,
     onSaveClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBTDeviceClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .shadow(2.dp, RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.onBackground)
+            .background(MaterialTheme.colorScheme.surface)
+            .clickable { onBTDeviceClick() }
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp),
@@ -44,20 +47,27 @@ fun BTDeviceItemComponent(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.secondary,
                 contentDescription = "Bluetooth device icon",
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(48.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Column(verticalArrangement = Arrangement.Center) {
-                Text(
-                    text = btDeviceDomain.name.orEmpty(),
-                    color = MaterialTheme.colorScheme.tertiary
-                )
-                Spacer(modifier = Modifier.height(4.dp))
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .height(60.dp)
+                    .padding(8.dp)
+            ) {
+                if (btDeviceDomain.name != null) {
+                    Text(
+                        text = btDeviceDomain.name,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
                 Text(
                     text = btDeviceDomain.macAddress,
-                    color = MaterialTheme.colorScheme.tertiary
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -81,7 +91,11 @@ private fun getSaveIconByState(isSaved: Boolean) = if (isSaved) {
 }
 
 @Composable
-private fun getIconColorByState(isSaved: Boolean) = if (isSaved) Color.Red else Color.Black
+private fun getIconColorByState(isSaved: Boolean) = if (isSaved) {
+    MaterialTheme.colorScheme.primary
+} else {
+    MaterialTheme.colorScheme.secondary
+}
 
 @Preview
 @Composable

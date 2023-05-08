@@ -38,7 +38,7 @@ private fun SavedDevicesContent(
 ) {
     ScaffoldComponent(title = stringResource(id = R.string.saved_devices_top_bar_label)) {
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
             contentPadding = PaddingValues(8.dp),
             modifier = Modifier.fillMaxSize()
         ) {
