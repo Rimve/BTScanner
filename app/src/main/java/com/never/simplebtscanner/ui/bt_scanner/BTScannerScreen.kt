@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,6 +36,7 @@ import com.never.simplebtscanner.R
 import com.never.simplebtscanner.ui.MainNavigationRoutes
 import com.never.simplebtscanner.ui.bt_scanner.components.BTDeviceItemComponent
 import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
+import com.never.simplebtscanner.utils.components.Dialog
 import com.never.simplebtscanner.utils.components.ScaffoldComponent
 import com.never.simplebtscanner.utils.theme.AppTheme
 import timber.log.Timber
@@ -107,7 +109,14 @@ private fun ScannerScreenContent(
                     ) {
                         BTDeviceItemComponent(
                             btDeviceDomain = state.searchedDeviceList[it],
-                            onSaveClick = { onSaveClick(state.searchedDeviceList[it], onAction) }
+                            onSaveClick = { onSaveClick(state.searchedDeviceList[it], onAction) },
+                            modifier = Modifier.clickable {
+                                onAction(
+                                    BTScannerAction.OnDeviceClick(
+                                        state.searchedDeviceList[it]
+                                    )
+                                )
+                            }
                         )
                     }
                 } else {
@@ -117,7 +126,14 @@ private fun ScannerScreenContent(
                     ) {
                         BTDeviceItemComponent(
                             btDeviceDomain = state.scannedDeviceList[it],
-                            onSaveClick = { onSaveClick(state.scannedDeviceList[it], onAction) }
+                            onSaveClick = { onSaveClick(state.scannedDeviceList[it], onAction) },
+                            modifier = Modifier.clickable {
+                                onAction(
+                                    BTScannerAction.OnDeviceClick(
+                                        state.scannedDeviceList[it]
+                                    )
+                                )
+                            }
                         )
                     }
                 }
@@ -137,6 +153,19 @@ private fun ScannerScreenContent(
                 }
             }
         }
+    }
+    if (state.selectedDevice != null) {
+        Dialog.WithTextField(
+            title = stringResource(id = R.string.scan_devices_alert_rename_device_title),
+            textFieldValue = state.selectedDeviceName,
+            onValueChange = { searchTerm ->
+                onAction(BTScannerAction.OnRenameDeviceTermUpdate(searchTerm))
+            },
+            onConfirm = { /*TODO*/ },
+            confirmButtonLabel = stringResource(id = R.string.scan_devices_alert_rename_confirm_label),
+            onDismiss = { onAction(BTScannerAction.OnDeviceRenameDialogDismiss) },
+            dismissButtonLabel = stringResource(id = R.string.scan_devices_alert_rename_cancel_label)
+        )
     }
 }
 

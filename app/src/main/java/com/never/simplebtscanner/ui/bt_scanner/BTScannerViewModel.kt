@@ -47,9 +47,12 @@ class BTScannerViewModel @Inject constructor(
             BTScannerAction.StartScanning -> startScanning()
             BTScannerAction.StopScanning -> stopScanning()
             BTScannerAction.OnSearchClick -> _state.update { it.copy(isSearching = !it.isSearching) }
+            BTScannerAction.OnDeviceRenameDialogDismiss -> _state.update { it.copy(selectedDevice = null) }
+            is BTScannerAction.OnDeviceClick -> onDeviceClick(action.btDevice)
             is BTScannerAction.SaveDevice -> saveDeviceToRepo(action.btDevice)
             is BTScannerAction.RemoveDevice -> removeDeviceFromRepo(action.btDevice)
             is BTScannerAction.OnSearchTermUpdate -> searchDeviceByTerm(action.searchTerm)
+            is BTScannerAction.OnRenameDeviceTermUpdate -> selectedDeviceNameUpdate(action.nameTerm)
         }
     }
 
@@ -95,6 +98,21 @@ class BTScannerViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun onDeviceClick(selectedDevice: BTDeviceDomain) {
+        _state.update {
+            it.copy(
+                selectedDevice = selectedDevice,
+                selectedDeviceName = selectedDevice.name
+            )
+        }
+    }
+
+    private fun selectedDeviceNameUpdate(nameTerm: String) {
+        _state.update {
+            it.copy(selectedDeviceName = nameTerm)
         }
     }
 

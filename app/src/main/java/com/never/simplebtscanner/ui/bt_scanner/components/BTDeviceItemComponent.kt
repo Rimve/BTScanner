@@ -29,10 +29,11 @@ import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
 @Composable
 fun BTDeviceItemComponent(
     btDeviceDomain: BTDeviceDomain,
-    onSaveClick: () -> Unit
+    onSaveClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.onBackground)
