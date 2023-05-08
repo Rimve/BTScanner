@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -25,7 +27,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -88,6 +92,11 @@ private fun ScannerScreenContent(
         snackbarMessage = state.snackbarMessage,
         snackbarDismissed = { onAction(BTScannerAction.SetSnackbarMessage(null)) }
     ) {
+        if (state.isSearching && state.searchedDeviceList.isEmpty() && state.searchTerm.length > 1) {
+            EmptySearchComponent(
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -107,9 +116,10 @@ private fun ScannerScreenContent(
                             },
                             placeholder = { SearchPlaceHolder() },
                             maxLines = 1,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
                 if (state.isSearching) {
@@ -119,7 +129,12 @@ private fun ScannerScreenContent(
                     ) {
                         BTDeviceItemComponent(
                             btDeviceDomain = state.searchedDeviceList[it],
-                            onSaveClick = { onSaveClick(state.searchedDeviceList[it], onAction) },
+                            onSaveClick = {
+                                onSaveClick(
+                                    state.searchedDeviceList[it],
+                                    onAction
+                                )
+                            },
                             modifier = Modifier.clickable {
                                 onAction(
                                     BTScannerAction.OnDeviceClick(
@@ -215,6 +230,27 @@ private fun onSaveClick(
         onAction(
             BTScannerAction.SaveDevice(btDeviceDomain)
         )
+    }
+}
+
+@Composable
+private fun EmptySearchComponent(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(
+            painter = painterResource(id = R.drawable.ic_empty_result),
+            contentDescription = "No search results found",
+            modifier = Modifier.size(96.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(id = R.string.scan_devices_search_results_empty_message)
+        )
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 
