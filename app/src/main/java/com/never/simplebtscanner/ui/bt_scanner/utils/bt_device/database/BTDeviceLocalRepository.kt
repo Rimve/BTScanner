@@ -18,10 +18,10 @@ class BTDeviceLocalRepository @Inject constructor(private val database: AppDatab
         database.btDeviceDao().deleteByAddress(btDevice.macAddress)
 
     fun getBTDeviceList() = database.btDeviceDao().getAll().map { btDeviceEntityList ->
-        btDeviceEntityList.map(BTDeviceEntity::toDomain)
+        btDeviceEntityList.map(BTDeviceEntity::toDomain).sortedBy { it.macAddress }
     }
 
     fun getSavedDeviceList() = database.btDeviceDao().getAllSaved().map { btDeviceEntityList ->
-        btDeviceEntityList.map(BTDeviceEntity::toDomain)
+        btDeviceEntityList.map(BTDeviceEntity::toDomain).sortedBy { it.macAddress }
     }
 }
