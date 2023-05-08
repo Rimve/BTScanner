@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.never.simplebtscanner.R
 import com.never.simplebtscanner.ui.bt_scanner.components.BTDeviceItemComponent
 import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
@@ -20,7 +19,6 @@ import com.never.simplebtscanner.utils.theme.AppTheme
 
 @Composable
 fun SavedDevicesScreen(
-    navController: NavController,
     viewModel: SavedDevicesViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -28,8 +26,7 @@ fun SavedDevicesScreen(
     AppTheme {
         SavedDevicesContent(
             savedDeviceList = state.savedDevices,
-            onAction = viewModel::onAction,
-            onBack = navController::popBackStack
+            onAction = viewModel::onAction
         )
     }
 }
@@ -37,13 +34,9 @@ fun SavedDevicesScreen(
 @Composable
 private fun SavedDevicesContent(
     savedDeviceList: List<BTDeviceDomain>,
-    onAction: (SavedDevicesAction) -> Unit,
-    onBack: () -> Unit
+    onAction: (SavedDevicesAction) -> Unit
 ) {
-    ScaffoldComponent(
-        title = stringResource(id = R.string.saved_devices_top_bar_label),
-        onBack = { onBack() }
-    ) {
+    ScaffoldComponent(title = stringResource(id = R.string.saved_devices_top_bar_label)) {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             contentPadding = PaddingValues(8.dp),

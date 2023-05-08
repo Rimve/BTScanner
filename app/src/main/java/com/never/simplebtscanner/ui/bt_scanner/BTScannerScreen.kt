@@ -32,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.never.simplebtscanner.R
@@ -44,10 +43,7 @@ import com.never.simplebtscanner.utils.theme.AppTheme
 import timber.log.Timber
 
 @Composable
-fun BTScannerScreen(
-    navController: NavController,
-    viewModel: BTScannerViewModel = hiltViewModel()
-) {
+fun BTScannerScreen(viewModel: BTScannerViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
     val missingPermissionsMessage = stringResource(
         id = R.string.scan_devices_missing_permissions_snackbar_label

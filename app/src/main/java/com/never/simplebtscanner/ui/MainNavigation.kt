@@ -2,7 +2,6 @@ package com.never.simplebtscanner.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -23,7 +22,6 @@ sealed class MainNavigationRoutes(
         screenName = "Scanner"
     ) {
         val route: String get() = String.format(routePattern)
-        fun destination(): String = String.format(routePattern)
     }
 
     object SavedDevices : MainNavigationRoutes(
@@ -32,7 +30,6 @@ sealed class MainNavigationRoutes(
         screenName = "Saved"
     ) {
         val route: String get() = String.format(routePattern)
-        fun destination(): String = String.format(routePattern)
     }
 }
 
@@ -42,19 +39,19 @@ fun MainNavigation(navController: NavHostController = rememberNavController()) {
         navController = navController,
         startDestination = MainNavigationRoutes.BTScannerRoute.route
     ) {
-        addBTScanner(navController)
-        addSavedDevices(navController)
+        addBTScanner()
+        addSavedDevices()
     }
 }
 
-private fun NavGraphBuilder.addBTScanner(navController: NavController) {
+private fun NavGraphBuilder.addBTScanner() {
     composable(route = MainNavigationRoutes.BTScannerRoute.route) {
-        BTScannerScreen(navController)
+        BTScannerScreen()
     }
 }
 
-private fun NavGraphBuilder.addSavedDevices(navController: NavController) {
+private fun NavGraphBuilder.addSavedDevices() {
     composable(route = MainNavigationRoutes.SavedDevices.route) {
-        SavedDevicesScreen(navController)
+        SavedDevicesScreen()
     }
 }
