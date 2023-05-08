@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">SimpleBTScanner</string>
     <string name="scan_devices_top_bar_label">Scan Bluetooth Devices</string>
+    <string name="scan_devices_missing_permissions_snackbar_label">Missing required permissions</string>
     <string name="scan_devices_alert_rename_device_title">Rename Device</string>
     <string name="scan_devices_alert_rename_device_description">Enter desired devices name</string>
     <string name="scan_devices_alert_rename_confirm_label">Confirm</string>
     <string name="scan_devices_alert_rename_cancel_label">Cancel</string>
+    <string name="scan_devices_rename_device_success_snackbar_message">Device renamed successfully</string>
     <string name="scan_devices_search_field_placeholder_label">Search by MAC address or name</string>
     <string name="saved_devices_top_bar_label">Saved Devices</string>
 </resources>

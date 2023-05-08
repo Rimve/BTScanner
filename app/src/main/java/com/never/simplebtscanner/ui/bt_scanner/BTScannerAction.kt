@@ -12,6 +12,7 @@ sealed class BTScannerAction {
     data class RemoveDevice(val btDevice: BTDeviceDomain) : BTScannerAction()
     data class OnSearchTermUpdate(val searchTerm: String) : BTScannerAction()
     data class OnRenameDeviceTermUpdate(val nameTerm: String) : BTScannerAction()
+    data class SetSnackbarMessage(val message: String?) : BTScannerAction()
     data class OnRenameDevice(
         val nameTerm: String?,
         val btDevice: BTDeviceDomain

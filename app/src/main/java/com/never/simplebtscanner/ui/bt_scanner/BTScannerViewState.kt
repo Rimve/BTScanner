@@ -8,5 +8,6 @@ data class BTScannerViewState(
     val isSearching: Boolean = false,
     val searchTerm: String = "",
     val selectedDevice: BTDeviceDomain? = null,
-    val selectedDeviceName: String? = null
+    val selectedDeviceName: String? = null,
+    val snackbarMessage: String? = null
 )

@@ -47,8 +47,16 @@ fun BTScannerScreen(
     viewModel: BTScannerViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val missingPermissionsMessage = stringResource(
+        id = R.string.scan_devices_missing_permissions_snackbar_label
+    )
 
     SetupPermissionCheck(
+        onMissingPermissions = {
+            viewModel.onAction(
+                BTScannerAction.SetSnackbarMessage(missingPermissionsMessage)
+            )
+        },
         onPermissionsGranted = {
             viewModel.onAction(BTScannerAction.StartScanning)
         }
@@ -76,7 +84,9 @@ private fun ScannerScreenContent(
 ) {
     ScaffoldComponent(
         title = stringResource(id = R.string.scan_devices_top_bar_label),
-        onSearch = { onAction(BTScannerAction.OnSearchClick) }
+        onSearch = { onAction(BTScannerAction.OnSearchClick) },
+        snackbarMessage = state.snackbarMessage,
+        snackbarDismissed = { onAction(BTScannerAction.SetSnackbarMessage(null)) }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
@@ -155,6 +165,9 @@ private fun ScannerScreenContent(
         }
     }
     if (state.selectedDevice != null) {
+        val renameSuccessMessage = stringResource(
+            id = R.string.scan_devices_rename_device_success_snackbar_message
+        )
         Dialog.WithTextField(
             title = stringResource(id = R.string.scan_devices_alert_rename_device_title),
             textFieldValue = state.selectedDeviceName,
@@ -168,10 +181,17 @@ private fun ScannerScreenContent(
                         btDevice = state.selectedDevice
                     )
                 )
+                onAction(
+                    BTScannerAction.SetSnackbarMessage(message = renameSuccessMessage)
+                )
             },
-            confirmButtonLabel = stringResource(id = R.string.scan_devices_alert_rename_confirm_label),
+            confirmButtonLabel = stringResource(
+                id = R.string.scan_devices_alert_rename_confirm_label
+            ),
             onDismiss = { onAction(BTScannerAction.OnDeviceRenameDialogDismiss) },
-            dismissButtonLabel = stringResource(id = R.string.scan_devices_alert_rename_cancel_label)
+            dismissButtonLabel = stringResource(
+                id = R.string.scan_devices_alert_rename_cancel_label
+            )
         )
     }
 }
@@ -200,7 +220,10 @@ private fun onSaveClick(
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun SetupPermissionCheck(onPermissionsGranted: () -> Unit) {
+private fun SetupPermissionCheck(
+    onMissingPermissions: () -> Unit,
+    onPermissionsGranted: () -> Unit
+) {
     val permissionList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         listOf(
             Manifest.permission.BLUETOOTH_SCAN,
@@ -217,6 +240,7 @@ private fun SetupPermissionCheck(onPermissionsGranted: () -> Unit) {
     ) { permissionMap ->
         val isMissingPermissions = permissionMap.any { !it.value }
         if (isMissingPermissions) {
+            onMissingPermissions()
             Timber.i("[ScannerScreen] Missing permissions")
         } else {
             Timber.i("[ScannerScreen] Permissions granted")

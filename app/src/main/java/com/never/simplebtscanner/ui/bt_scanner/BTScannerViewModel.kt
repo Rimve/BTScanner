@@ -54,6 +54,7 @@ class BTScannerViewModel @Inject constructor(
             is BTScannerAction.OnSearchTermUpdate -> searchDeviceByTerm(action.searchTerm)
             is BTScannerAction.OnRenameDeviceTermUpdate -> selectedDeviceNameUpdate(action.nameTerm)
             is BTScannerAction.OnRenameDevice -> renameDevice(action.nameTerm, action.btDevice)
+            is BTScannerAction.SetSnackbarMessage -> setSnackbarMessage(action.message)
         }
     }
 
@@ -126,6 +127,10 @@ class BTScannerViewModel @Inject constructor(
                 _state.update { it.copy(selectedDevice = null) }
             }
         }
+    }
+
+    private fun setSnackbarMessage(message: String?) {
+        _state.update { it.copy(snackbarMessage = message) }
     }
 
     override fun onCleared() {
