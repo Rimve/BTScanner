@@ -37,7 +37,10 @@ fun BTDeviceItemComponent(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(2.dp, RoundedCornerShape(8.dp))
+            .shadow(
+                elevation = 2.dp,
+                shape = RoundedCornerShape(8.dp)
+            )
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.surface)
             .clickable { onBTDeviceClick() }
