@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -83,15 +84,19 @@ fun AppTheme(
         isDarkMode -> DarkColors
         else -> LightColors
     }
-    if (isDarkMode) {
-        systemUiController.setSystemBarsColor(
-            color = DarkColors.primary
-        )
-    } else {
-        systemUiController.setSystemBarsColor(
-            color = LightColors.primary
-        )
+
+    SideEffect {
+        if (isDarkMode) {
+            systemUiController.setSystemBarsColor(
+                color = DarkColors.primary
+            )
+        } else {
+            systemUiController.setSystemBarsColor(
+                color = LightColors.primary
+            )
+        }
     }
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
