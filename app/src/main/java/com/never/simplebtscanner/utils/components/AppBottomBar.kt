@@ -36,13 +36,7 @@ object AppBottomBar {
                             modifier = Modifier.size(24.dp)
                         )
                     },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                        indicatorColor = MaterialTheme.colorScheme.onPrimary,
-                        unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                        unselectedTextColor = MaterialTheme.colorScheme.onPrimary
-                    ),
+                    colors = navigationBarColors(),
                     label = { Text(text = screen.screenName) },
                     selected = currentDestination?.hierarchy?.any { it.route == screen.routePattern } == true,
                     onClick = {
@@ -78,13 +72,7 @@ object AppBottomBar {
                             modifier = Modifier.size(24.dp)
                         )
                     },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                        indicatorColor = MaterialTheme.colorScheme.onPrimary,
-                        unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                        unselectedTextColor = MaterialTheme.colorScheme.onPrimary
-                    ),
+                    colors = navigationBarColors(),
                     label = { Text(text = screen.screenName) },
                     selected = screen == currentPage,
                     onClick = { onClick(index) }
@@ -92,4 +80,13 @@ object AppBottomBar {
             }
         }
     }
+
+    @Composable
+    private fun navigationBarColors() = NavigationBarItemDefaults.colors(
+        selectedIconColor = MaterialTheme.colorScheme.primary,
+        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+        indicatorColor = MaterialTheme.colorScheme.onPrimary,
+        unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
+        unselectedTextColor = MaterialTheme.colorScheme.onPrimary
+    )
 }
