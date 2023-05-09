@@ -43,18 +43,25 @@ class BTScannerViewModel @Inject constructor(
     }
 
     fun onAction(action: BTScannerAction) {
-        when (action) {
-            BTScannerAction.StartScanning -> startScanning()
-            BTScannerAction.StopScanning -> stopScanning()
-            BTScannerAction.OnSearchClick -> _state.update { it.copy(isSearching = !it.isSearching) }
-            BTScannerAction.OnDeviceRenameDialogDismiss -> _state.update { it.copy(selectedDevice = null) }
-            is BTScannerAction.OnDeviceClick -> onDeviceClick(action.btDevice)
-            is BTScannerAction.SaveDevice -> saveDeviceToRepo(action.btDevice)
-            is BTScannerAction.RemoveDevice -> removeDeviceFromRepo(action.btDevice)
-            is BTScannerAction.OnSearchTermUpdate -> searchDeviceByTerm(action.searchTerm)
-            is BTScannerAction.OnRenameDeviceTermUpdate -> selectedDeviceNameUpdate(action.nameTerm)
-            is BTScannerAction.OnRenameDevice -> renameDevice(action.nameTerm, action.btDevice)
-            is BTScannerAction.SetSnackbarMessage -> setSnackbarMessage(action.message)
+        viewModelScope.launch {
+            withContext(ioDispatcher) {
+                when (action) {
+                    BTScannerAction.StartScanning -> startScanning()
+                    BTScannerAction.StopScanning -> stopScanning()
+                    BTScannerAction.OnSearchClick -> onSearchClick()
+                    BTScannerAction.OnDeviceRenameDialogDismiss -> onDeviceRenameDialogDismiss()
+                    is BTScannerAction.SetSnackbarMessage -> setSnackbarMessage(action.message)
+                    is BTScannerAction.OnDeviceClick -> onDeviceClick(action.btDevice)
+                    is BTScannerAction.SaveDevice -> saveDeviceToRepo(action.btDevice)
+                    is BTScannerAction.RemoveDevice -> removeDeviceFromRepo(action.btDevice)
+                    is BTScannerAction.OnSearchTermUpdate -> searchDeviceByTerm(action.searchTerm)
+                    is BTScannerAction.OnRenameDeviceTermUpdate -> selectedDeviceNameUpdate(action.nameTerm)
+                    is BTScannerAction.OnRenameDevice -> renameDevice(
+                        action.nameTerm,
+                        action.btDevice
+                    )
+                }
+            }
         }
     }
 
@@ -68,40 +75,28 @@ class BTScannerViewModel @Inject constructor(
         _state.update { it.copy(isScanning = false) }
     }
 
+    private fun onSearchClick() {
+        _state.update { it.copy(isSearching = !it.isSearching) }
+    }
+
+    private fun onDeviceRenameDialogDismiss() {
+        _state.update { it.copy(selectedDevice = null) }
+    }
+
     private fun saveDeviceToRepo(btDevice: BTDeviceDomain) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                btDeviceLocalRepository.insertBTDevice(
-                    btDevice.copy(isSaved = true)
-                )
-            }
-        }
+        btDeviceLocalRepository.insertSavedBTDevice(btDevice)
     }
 
     private fun removeDeviceFromRepo(btDevice: BTDeviceDomain) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                btDeviceLocalRepository.insertBTDevice(
-                    btDevice.copy(isSaved = false)
-                )
-            }
-        }
+        btDeviceLocalRepository.removeSavedBTDevice(btDevice)
     }
 
     private fun searchDeviceByTerm(searchTerm: String) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                _state.update { state ->
-                    val foundDeviceList = state.scannedDeviceList.filter {
-                        it.macAddress.contains(searchTerm, ignoreCase = true) ||
-                                (it.name?.contains(searchTerm, ignoreCase = true) ?: false)
-                    }
-                    state.copy(
-                        searchTerm = searchTerm,
-                        searchedDeviceList = foundDeviceList
-                    )
-                }
-            }
+        _state.update { state ->
+            state.copy(
+                searchTerm = searchTerm,
+                searchedDeviceList = btDeviceLocalRepository.searchDevice(searchTerm)
+            )
         }
     }
 
@@ -121,14 +116,10 @@ class BTScannerViewModel @Inject constructor(
     }
 
     private fun renameDevice(newName: String?, btDevice: BTDeviceDomain) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                btDeviceLocalRepository.insertBTDevice(
-                    btDevice.copy(name = newName)
-                )
-                _state.update { it.copy(selectedDevice = null) }
-            }
-        }
+        btDeviceLocalRepository.insertBTDevice(
+            btDevice.copy(name = newName)
+        )
+        _state.update { it.copy(selectedDevice = null) }
     }
 
     private fun setSnackbarMessage(message: String?) {

@@ -51,8 +51,6 @@ private fun SavedDevicesContent(
                     onSaveClick = {
                         if (savedDeviceList[it].isSaved) {
                             onAction(SavedDevicesAction.RemoveDeviceFromRepo(savedDeviceList[it]))
-                        } else {
-                            onAction(SavedDevicesAction.AddDeviceToRepo(savedDeviceList[it]))
                         }
                     }
                 )

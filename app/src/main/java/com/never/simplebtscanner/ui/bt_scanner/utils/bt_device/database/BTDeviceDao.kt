@@ -15,20 +15,14 @@ interface BTDeviceDao {
     fun getAllSaved(): Flow<List<BTDeviceEntity>>
 
     @Query(
-        "SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE name LIKE :name" +
-                " OR macAddress LIKE :macAddress LIMIT 1"
+        "SELECT * FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE name LIKE '%' || :searchTerm || '%'" +
+                " OR macAddress LIKE '%' || :searchTerm || '%'"
     )
-    fun findByNameOrMacAddress(name: String?, macAddress: String): BTDeviceEntity?
+    fun findByNameOrMacAddress(searchTerm: String): List<BTDeviceEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(btDevice: BTDeviceEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertList(btDeviceList: List<BTDeviceEntity>)
-
-    @Query("DELETE FROM ${BTDeviceEntity.DB_TABLE_NAME} WHERE macAddress = :macAddress")
-    fun deleteByAddress(macAddress: String)
-
-    @Query("DELETE FROM ${BTDeviceEntity.DB_TABLE_NAME}")
-    fun deleteAll()
 }

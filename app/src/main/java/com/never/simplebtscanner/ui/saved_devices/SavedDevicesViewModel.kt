@@ -32,23 +32,14 @@ class SavedDevicesViewModel @Inject constructor(
 
     fun onAction(action: SavedDevicesAction) {
         when (action) {
-            is SavedDevicesAction.AddDeviceToRepo -> addDeviceToRepo(action.btDevice)
             is SavedDevicesAction.RemoveDeviceFromRepo -> removeDeviceFromRepo(action.btDevice)
-        }
-    }
-
-    private fun addDeviceToRepo(btDevice: BTDeviceDomain) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                btDeviceLocalRepository.insertBTDevice(btDevice)
-            }
         }
     }
 
     private fun removeDeviceFromRepo(btDevice: BTDeviceDomain) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                btDeviceLocalRepository.removeBTDevice(btDevice)
+                btDeviceLocalRepository.removeSavedBTDevice(btDevice)
             }
         }
     }
