@@ -12,4 +12,4 @@ SimpleBTScanner was built using these technologies:
  - Accompanist Compose extension libraries
  - Coroutines
 ## Showcase
-![Presentation gif](https://i.ibb.co/5skfg3M/present-gif.gif)
+![Presentation gif](https://github.com/Rimve/BTScanner/blob/develop/presentation.gif)
