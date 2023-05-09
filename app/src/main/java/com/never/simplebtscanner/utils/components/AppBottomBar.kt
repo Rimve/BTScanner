@@ -58,4 +58,38 @@ object AppBottomBar {
             }
         }
     }
+
+    @Composable
+    fun Pager(
+        pageList: List<MainNavigationRoutes>,
+        currentPage: MainNavigationRoutes,
+        onClick: (Int) -> Unit
+    ) {
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
+            pageList.forEachIndexed { index, screen ->
+                NavigationBarItem(
+                    alwaysShowLabel = false,
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = screen.iconResId),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                        indicatorColor = MaterialTheme.colorScheme.onPrimary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                        unselectedTextColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    label = { Text(text = screen.screenName) },
+                    selected = screen == currentPage,
+                    onClick = { onClick(index) }
+                )
+            }
+        }
+    }
 }
