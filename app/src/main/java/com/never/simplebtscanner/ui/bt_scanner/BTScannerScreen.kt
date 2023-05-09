@@ -106,11 +106,8 @@ private fun ScannerScreenContent(
                 .padding(top = 8.dp)
         ) {
             SearchComponent(
-                isVisible = state.isSearching,
-                searchTerm = state.searchTerm,
-                onValueChange = { searchTerm ->
-                    onAction(BTScannerAction.OnSearchTermUpdate(searchTerm))
-                }
+                state = state,
+                onAction = onAction
             )
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -228,19 +225,18 @@ private fun onDeviceSaveClick(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchComponent(
-    isVisible: Boolean,
-    searchTerm: String,
-    onValueChange: (String) -> Unit
+    state: BTScannerViewState,
+    onAction: (BTScannerAction) -> Unit
 ) {
     AnimatedVisibility(
-        visible = isVisible,
+        visible = state.isSearching,
         enter = slideInVertically { -it },
         exit = slideOutVertically { -it }
     ) {
         TextField(
-            value = searchTerm,
+            value = state.searchTerm,
             onValueChange = { searchTerm ->
-                onValueChange(searchTerm)
+                onAction(BTScannerAction.OnSearchTermUpdate(searchTerm))
             },
             placeholder = { SearchTextPlaceHolder() },
             maxLines = 1,
@@ -279,7 +275,9 @@ private fun RenameDialogComponent(
             textFieldValue = state.selectedDeviceName,
             placeHolder = { DialogTextPlaceHolder() },
             onValueChange = { searchTerm ->
-                onAction(BTScannerAction.OnRenameDeviceTermUpdate(searchTerm))
+                onAction(
+                    BTScannerAction.OnRenameDeviceTermUpdate(searchTerm)
+                )
             },
             onConfirm = {
                 onAction(

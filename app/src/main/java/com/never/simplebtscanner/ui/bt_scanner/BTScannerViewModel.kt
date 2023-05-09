@@ -43,25 +43,21 @@ class BTScannerViewModel @Inject constructor(
     }
 
     fun onAction(action: BTScannerAction) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                when (action) {
-                    BTScannerAction.StartScanning -> startScanning()
-                    BTScannerAction.StopScanning -> stopScanning()
-                    BTScannerAction.OnSearchClick -> onSearchClick()
-                    BTScannerAction.OnDeviceRenameDialogDismiss -> onDeviceRenameDialogDismiss()
-                    is BTScannerAction.SetSnackbarMessage -> setSnackbarMessage(action.message)
-                    is BTScannerAction.OnDeviceClick -> onDeviceClick(action.btDevice)
-                    is BTScannerAction.SaveDevice -> saveDeviceToRepo(action.btDevice)
-                    is BTScannerAction.RemoveDevice -> removeDeviceFromRepo(action.btDevice)
-                    is BTScannerAction.OnSearchTermUpdate -> searchDeviceByTerm(action.searchTerm)
-                    is BTScannerAction.OnRenameDeviceTermUpdate -> selectedDeviceNameUpdate(action.nameTerm)
-                    is BTScannerAction.OnRenameDevice -> renameDevice(
-                        action.nameTerm,
-                        action.btDevice
-                    )
-                }
-            }
+        when (action) {
+            BTScannerAction.StartScanning -> startScanning()
+            BTScannerAction.StopScanning -> stopScanning()
+            BTScannerAction.OnSearchClick -> onSearchClick()
+            BTScannerAction.OnDeviceRenameDialogDismiss -> onDeviceRenameDialogDismiss()
+            is BTScannerAction.SetSnackbarMessage -> setSnackbarMessage(action.message)
+            is BTScannerAction.OnDeviceClick -> onDeviceClick(action.btDevice)
+            is BTScannerAction.SaveDevice -> saveDeviceToRepo(action.btDevice)
+            is BTScannerAction.RemoveDevice -> removeDeviceFromRepo(action.btDevice)
+            is BTScannerAction.OnSearchTermUpdate -> searchDeviceByTerm(action.searchTerm)
+            is BTScannerAction.OnRenameDeviceTermUpdate -> selectedDeviceNameUpdate(action.nameTerm)
+            is BTScannerAction.OnRenameDevice -> renameDevice(
+                action.nameTerm,
+                action.btDevice
+            )
         }
     }
 
@@ -84,19 +80,33 @@ class BTScannerViewModel @Inject constructor(
     }
 
     private fun saveDeviceToRepo(btDevice: BTDeviceDomain) {
-        btDeviceLocalRepository.insertSavedBTDevice(btDevice)
+        viewModelScope.launch {
+            withContext(ioDispatcher) {
+                btDeviceLocalRepository.insertSavedBTDevice(btDevice)
+            }
+        }
     }
 
     private fun removeDeviceFromRepo(btDevice: BTDeviceDomain) {
-        btDeviceLocalRepository.removeSavedBTDevice(btDevice)
+        viewModelScope.launch {
+            withContext(ioDispatcher) {
+                btDeviceLocalRepository.removeSavedBTDevice(btDevice)
+            }
+        }
     }
 
     private fun searchDeviceByTerm(searchTerm: String) {
         _state.update { state ->
-            state.copy(
-                searchTerm = searchTerm,
-                searchedDeviceList = btDeviceLocalRepository.searchDevice(searchTerm)
-            )
+            state.copy(searchTerm = searchTerm)
+        }
+        viewModelScope.launch {
+            withContext(ioDispatcher) {
+                _state.update { state ->
+                    state.copy(
+                        searchedDeviceList = btDeviceLocalRepository.searchDevice(searchTerm)
+                    )
+                }
+            }
         }
     }
 
@@ -116,9 +126,13 @@ class BTScannerViewModel @Inject constructor(
     }
 
     private fun renameDevice(newName: String?, btDevice: BTDeviceDomain) {
-        btDeviceLocalRepository.insertBTDevice(
-            btDevice.copy(name = newName)
-        )
+        viewModelScope.launch {
+            withContext(ioDispatcher) {
+                btDeviceLocalRepository.insertBTDevice(
+                    btDevice.copy(name = newName)
+                )
+            }
+        }
         _state.update { it.copy(selectedDevice = null) }
     }
 
