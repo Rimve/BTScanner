@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.never.simplebtscanner.di.IoDispatcher
 import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
-import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.database.BTDeviceLocalRepository
+import com.never.simplebtscanner.ui.saved_devices.utils.usecases.SavedDevicesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SavedDevicesViewModel @Inject constructor(
-    private val btDeviceLocalRepository: BTDeviceLocalRepository,
+    private val savedDevicesUseCase: SavedDevicesUseCase,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _state = MutableStateFlow(SavedDevicesViewState())
@@ -24,7 +24,7 @@ class SavedDevicesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            btDeviceLocalRepository.getSavedDeviceList().collect { savedDeviceList ->
+            savedDevicesUseCase.getSavedDeviceList().collect { savedDeviceList ->
                 _state.update { it.copy(savedDevices = savedDeviceList) }
             }
         }
@@ -39,7 +39,7 @@ class SavedDevicesViewModel @Inject constructor(
     private fun removeDeviceFromRepo(btDevice: BTDeviceDomain) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                btDeviceLocalRepository.removeSavedBTDevice(btDevice)
+                savedDevicesUseCase.removeSavedBTDevice(btDevice)
             }
         }
     }

@@ -5,7 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.never.simplebtscanner.di.IoDispatcher
 import com.never.simplebtscanner.ui.bt_scanner.utils.BTController
 import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.BTDeviceDomain
-import com.never.simplebtscanner.ui.bt_scanner.utils.bt_device.database.BTDeviceLocalRepository
+import com.never.simplebtscanner.ui.bt_scanner.utils.usecases.DevicesUseCase
+import com.never.simplebtscanner.ui.saved_devices.utils.usecases.SavedDevicesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BTScannerViewModel @Inject constructor(
     private val btController: BTController,
-    private val btDeviceLocalRepository: BTDeviceLocalRepository,
+    private val devicesUseCase: DevicesUseCase,
+    private val savedDevicesUseCase: SavedDevicesUseCase,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _state = MutableStateFlow(BTScannerViewState())
@@ -28,14 +30,14 @@ class BTScannerViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(ioDispatcher) {
                 btController.scannedDeviceList.collect { scannedDeviceList ->
-                    btDeviceLocalRepository.insertBTDeviceList(scannedDeviceList)
+                    devicesUseCase.insertBTDeviceList(scannedDeviceList)
                 }
             }
         }
 
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                btDeviceLocalRepository.getBTDeviceList().collect { repoDeviceList ->
+                devicesUseCase.getBTDeviceList().collect { repoDeviceList ->
                     _state.update { it.copy(scannedDeviceList = repoDeviceList) }
                 }
             }
@@ -82,7 +84,7 @@ class BTScannerViewModel @Inject constructor(
     private fun saveDeviceToRepo(btDevice: BTDeviceDomain) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                btDeviceLocalRepository.insertSavedBTDevice(btDevice)
+                savedDevicesUseCase.insertSavedBTDevice(btDevice)
             }
         }
     }
@@ -90,7 +92,7 @@ class BTScannerViewModel @Inject constructor(
     private fun removeDeviceFromRepo(btDevice: BTDeviceDomain) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                btDeviceLocalRepository.removeSavedBTDevice(btDevice)
+                savedDevicesUseCase.removeSavedBTDevice(btDevice)
             }
         }
     }
@@ -103,7 +105,7 @@ class BTScannerViewModel @Inject constructor(
             withContext(ioDispatcher) {
                 _state.update { state ->
                     state.copy(
-                        searchedDeviceList = btDeviceLocalRepository.searchDevice(searchTerm)
+                        searchedDeviceList = devicesUseCase.searchDevice(searchTerm)
                     )
                 }
             }
@@ -128,7 +130,7 @@ class BTScannerViewModel @Inject constructor(
     private fun renameDevice(newName: String?, btDevice: BTDeviceDomain) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                btDeviceLocalRepository.insertBTDevice(
+                devicesUseCase.insertBTDevice(
                     btDevice.copy(name = newName)
                 )
             }
