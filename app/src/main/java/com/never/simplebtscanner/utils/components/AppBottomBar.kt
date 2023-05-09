@@ -36,7 +36,7 @@ object AppBottomBar {
                             modifier = Modifier.size(24.dp)
                         )
                     },
-                    colors = navigationBarColors(),
+                    colors = getNavigationBarColors(),
                     label = { Text(text = screen.screenName) },
                     selected = currentDestination?.hierarchy?.any { it.route == screen.routePattern } == true,
                     onClick = {
@@ -72,7 +72,7 @@ object AppBottomBar {
                             modifier = Modifier.size(24.dp)
                         )
                     },
-                    colors = navigationBarColors(),
+                    colors = getNavigationBarColors(),
                     label = { Text(text = screen.screenName) },
                     selected = screen == currentPage,
                     onClick = { onClick(index) }
@@ -82,7 +82,7 @@ object AppBottomBar {
     }
 
     @Composable
-    private fun navigationBarColors() = NavigationBarItemDefaults.colors(
+    private fun getNavigationBarColors() = NavigationBarItemDefaults.colors(
         selectedIconColor = MaterialTheme.colorScheme.primary,
         selectedTextColor = MaterialTheme.colorScheme.onPrimary,
         indicatorColor = MaterialTheme.colorScheme.onPrimary,

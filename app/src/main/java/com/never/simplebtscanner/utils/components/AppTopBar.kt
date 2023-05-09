@@ -31,13 +31,7 @@ object AppTopBar {
         onBack: (() -> Unit)? = null
     ) {
         TopAppBar(
-            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                scrolledContainerColor = MaterialTheme.colorScheme.primary,
-                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-            ),
+            colors = getTopBarColors(),
             title = {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -55,31 +49,51 @@ object AppTopBar {
             },
             navigationIcon = {
                 if (onBack != null) {
-                    IconButton(
-                        colors = IconButtonDefaults.iconButtonColors(),
-                        onClick = { onBack() },
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_back_arrow),
-                            contentDescription = "Back button",
-                        )
-                    }
+                    BackButtonComponent(onBack = { onBack() })
                 }
             },
             actions = {
                 if (onSearch != null) {
-                    IconButton(
-                        onClick = { onSearch() },
-                        modifier = Modifier.size(26.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_search),
-                            contentDescription = "Search button",
-                        )
-                    }
+                    SearchButtonComponent(onSearch = { onSearch() })
                 }
             }
         )
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun getTopBarColors() = TopAppBarDefaults.mediumTopAppBarColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        scrolledContainerColor = MaterialTheme.colorScheme.primary,
+        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+        actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+    )
+
+    @Composable
+    private fun BackButtonComponent(onBack: () -> Unit) {
+        IconButton(
+            colors = IconButtonDefaults.iconButtonColors(),
+            onClick = { onBack() },
+            modifier = Modifier.size(32.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_back_arrow),
+                contentDescription = "Back button",
+            )
+        }
+    }
+
+    @Composable
+    private fun SearchButtonComponent(onSearch: () -> Unit) {
+        IconButton(
+            onClick = { onSearch() },
+            modifier = Modifier.size(26.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_search),
+                contentDescription = "Search button",
+            )
+        }
     }
 }
